@@ -1,6 +1,6 @@
 import datetime
 
-from flask import Flask, render_template
+from flask import Flask, request, render_template, jsonify
 
 app = Flask(__name__)
 
@@ -16,6 +16,11 @@ def root():
 
     return render_template('index.html', times=dummy_times)
 
+@app.route('/info')
+def info():
+    text = request.args.get('text')
+    # no error at the moment
+    return jsonify(status='success', data=text)
 
 if __name__ == '__main__':
     # This is used when running locally only. When deploying to Google App
