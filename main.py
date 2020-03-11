@@ -2,8 +2,12 @@ import datetime
 
 from flask import Flask, request, render_template, jsonify
 
+from google.cloud import language
+from google.cloud.language import enums, types
+
 app = Flask(__name__)
 
+client = language.LanguageServiceClient()
 
 @app.route('/')
 def root():
@@ -19,8 +23,19 @@ def root():
 @app.route('/info')
 def info():
     text = request.args.get('text')
+
+    document = types.Document(
+        content=text,
+        type=enums.Document.Type.PLAIN_TEXT)
+
+    response = client.analyze_entities(document=document, encoding_type='UTF32')
+    wiki_entities = [e.name for e in response.entities if 'wikipedia_url' in e.metadata]
+
+    for e in wiki_entities:
+        print(e)
+
     # no error at the moment
-    return jsonify(status='success', data=text)
+    return jsonify(status='success', data=wiki_entities)
 
 if __name__ == '__main__':
     # This is used when running locally only. When deploying to Google App
