@@ -22,11 +22,10 @@
       <div id="docent" class="col-3 p-0">
         <div class="row m-2">
           <div class="card m-2" v-for="item in entities">
-            <img src="..." class="card-img-top" alt="...">
-            <div class="card-body">
+            <img :src="item.image" class="card-img-top" alt="...">
+              <div class="card-body">
               <h5 class="card-title">{{ item.name }}</h5>
-              <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's
-                content.</p>
+              <p class="card-text"><small>{{ item.text }}</small></p>
             </div>
           </div>
         </div>

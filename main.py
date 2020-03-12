@@ -45,9 +45,15 @@ def summary(entity):
         f'https://en.wikipedia.org/api/rest_v1/page/summary/{entity}')
     print('GET ' + resp.url)
     data = resp.json()
+    if 'extract' in data:
+        sentences = data['extract'].split('.')
+        first_two_sen = '.'.join(sentences[:2]) + '.'
+    else:
+        first_two_sen = None
     summary_data = {
+        'name': entity,
         'image_url': data['thumbnail']['source'] if 'thumbnail' in data else None,
-        'text': data.get('extract')
+        'text': first_two_sen
     }
     return jsonify(status='success', data=summary_data)
 
