@@ -22,7 +22,7 @@ def root():
 
     return render_template('index.html', times=dummy_times)
 
-@app.route('/info')
+@app.route('/api/info')
 def info():
     text = request.args.get('text')
 
