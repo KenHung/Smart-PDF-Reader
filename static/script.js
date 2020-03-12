@@ -2,7 +2,22 @@
 
 window.addEventListener('load', function () {
   console.log("Hello World!");
-  fetchEntities();
+
+  let iframe = document.getElementById('pdf-viewer');
+  let pdfViewer = iframe.contentWindow.document.getElementById('viewer');
+  let numPages = iframe.contentWindow.document.getElementById('numPages');
+
+  numPages.addEventListener('DOMSubtreeModified', () => {
+    console.log('change ' + numPages.textContent);
+    const pageMatch = numPages.textContent.match(/(\d+) /);
+    if (pageMatch) {
+      const currentPageNum = pageMatch[1];
+      const currentPage = pdfViewer.querySelector(`.page[data-page-number='${currentPageNum}']`);
+      if (currentPage) {
+        fetchEntities(currentPage.textContent);
+      }
+    }
+  });
 });
 
 var vm = new Vue({
@@ -14,10 +29,8 @@ var vm = new Vue({
   }
 })
 
-function fetchEntities() {
-  let iframe = document.getElementById('pdf-viewer');
-  let pdfViewer = iframe.contentWindow.document.getElementById('viewer');
-  fetch('/api/entities?text=' + pdfViewer.textContent)
+function fetchEntities(text) {
+  fetch('/api/entities?text=' + text)
     .then(resp => resp.json())
     .then(jsonData => {
       vm.entities = jsonData.data

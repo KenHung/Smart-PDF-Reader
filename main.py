@@ -17,6 +17,9 @@ def root():
 
 @app.route('/api/entities')
 def entities():
+    """get all entities in text using Google NLP API, 
+    only entities with wikipedia entries are returned
+    """
     text = request.args.get('text')
 
     document = types.Document(
@@ -41,6 +44,7 @@ def entities():
 
 @app.route('/api/summary/<entity>')
 def summary(entity):
+    """get summary data from Wikipedia, mainly text and primary image url"""
     resp = requests.get(
         f'https://en.wikipedia.org/api/rest_v1/page/summary/{entity}')
     print('GET ' + resp.url)
