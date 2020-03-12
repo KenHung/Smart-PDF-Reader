@@ -1,7 +1,5 @@
-import datetime
-
 import requests
-from flask import Flask, request, render_template, jsonify
+from flask import Flask, request, send_from_directory, jsonify
 import wikipedia as wiki
 
 from google.cloud import language
@@ -14,14 +12,7 @@ client = language.LanguageServiceClient()
 
 @app.route('/')
 def root():
-    # For the sake of example, use static information to inflate the template.
-    # This will be replaced with real information in later steps.
-    dummy_times = [datetime.datetime(2018, 1, 1, 10, 0, 0),
-                   datetime.datetime(2018, 1, 2, 10, 30, 0),
-                   datetime.datetime(2018, 1, 3, 11, 0, 0),
-                   ]
-
-    return render_template('index.html', times=dummy_times)
+    return send_from_directory('templates', 'index.html')
 
 
 @app.route('/api/entities')
