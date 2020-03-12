@@ -23,6 +23,5 @@ def test_summary(client):
     resp = client.get('/api/summary/Edward_VI_of_England')
     data = resp.get_json()
     summary = data['data']
-    assert summary.name == 'Edward_VI_of_England'
-    assert summary.image_url.startswith('https://')
-    assert summary.text is not None
+    assert summary['image_url'].startswith('https://')
+    assert summary['text'] is not None

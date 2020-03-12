@@ -50,25 +50,15 @@ def entities():
 
 @app.route('/api/summary/<entity>')
 def summary(entity):
-    return {
-        'name': entity.name,
-        'image_url': None,
-        'summary': None
-    }
-
-def primary_image(title):
-    payload = dict(
-        action='query',
-        prop='pageimages',
-        titles=title,
-        pithumbsize=200,
-        format='json'
-    )
-    resp = requests.get('https://en.wikipedia.org/w/api.php', params=payload)
+    resp = requests.get(
+        f'https://en.wikipedia.org/api/rest_v1/page/summary/{entity}')
     print('GET ' + resp.url)
     data = resp.json()
-    page_info = next(iter(data['query']['pages'].values()))
-    return page_info['thumbnail']['source'] if 'thumbnail' in page_info else None
+    summary_data = {
+        'image_url': data['thumbnail']['source'] if 'thumbnail' in data else None,
+        'text': data.get('extract')
+    }
+    return jsonify(status='success', data=summary_data)
 
 
 if __name__ == '__main__':
