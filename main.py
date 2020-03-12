@@ -1,9 +1,11 @@
 import datetime
 
+import requests
 from flask import Flask, request, render_template, jsonify
+import wikipedia as wiki
+
 from google.cloud import language
 from google.cloud.language import enums, types
-import wikipedia as wiki
 
 app = Flask(__name__)
 
@@ -33,14 +35,30 @@ def info():
 
     info_data = []
     for e in wiki_entities:
-        print(e)
         full_name = e.metadata['wikipedia_url'].split('/')[-1]
-        wkpage = wiki.page(full_name)
-        entity = dict(name=e.name, image_url=wkpage.images[0], summary=None)
+        entity = dict(
+            name=e.name,
+            image_url=get_primary_image(full_name),
+            summary=wiki.summary(full_name, sentences=2))
+        print(entity)
         info_data.append(entity)
 
     # no error at the moment
     return jsonify(status='success', data=info_data)
+
+def get_primary_image(title):
+    payload = dict(
+        action='query',
+        prop='pageimages',
+        titles=title,
+        pithumbsize=200,
+        format='json'
+    )
+    resp = requests.get('https://en.wikipedia.org/w/api.php', params=payload)
+    print('GET ' + resp.url)
+    data = resp.json()
+    page_info = next(iter(data['query']['pages'].values()))
+    return page_info['thumbnail']['source'] if 'thumbnail' in page_info else None
 
 if __name__ == '__main__':
     # This is used when running locally only. When deploying to Google App

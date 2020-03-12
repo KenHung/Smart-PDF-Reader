@@ -2,3 +2,4 @@ Flask==1.1.1
 google-cloud-language
 wikipedia
 pytest
+requests
