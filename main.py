@@ -1,4 +1,5 @@
 import datetime
+
 from flask import Flask, request, render_template, jsonify
 from google.cloud import language
 from google.cloud.language import enums, types
@@ -27,15 +28,16 @@ def info():
         content=text,
         type=enums.Document.Type.PLAIN_TEXT)
 
-    response = client.analyze_entities(document=document, encoding_type='UTF32')
-    wiki_entities = [e for e in response.entities if 'wikipedia_url' in e.metadata]
+    resp = client.analyze_entities(document=document, encoding_type='UTF32')
+    wiki_entities = [e for e in resp.entities if 'wikipedia_url' in e.metadata]
 
     info_data = []
     for e in wiki_entities:
         print(e)
         full_name = e.metadata['wikipedia_url'].split('/')[-1]
         wkpage = wiki.page(full_name)
-        info_data.append((e.name, wkpage.summary))
+        entity = dict(name=e.name, image_url=wkpage.images[0], summary=None)
+        info_data.append(entity)
 
     # no error at the moment
     return jsonify(status='success', data=info_data)
