@@ -7,3 +7,23 @@ html, body {
   height: 100%;
   margin: 0;
 }
+
+#docent {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 300px;
+  height: 100%;
+  overflow-y: scroll;
+}
+
+#main {
+  margin-right: 300px;
+  height: 100%;
+  overflow-y: hidden;
+}
+
+#pdf-viewer {
+  width: 100%;
+  border: 0;
+}
