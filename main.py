@@ -11,6 +11,7 @@ app = Flask(__name__)
 
 client = language.LanguageServiceClient()
 
+
 @app.route('/')
 def root():
     # For the sake of example, use static information to inflate the template.
@@ -22,8 +23,9 @@ def root():
 
     return render_template('index.html', times=dummy_times)
 
-@app.route('/api/info')
-def info():
+
+@app.route('/api/entities')
+def entities():
     text = request.args.get('text')
 
     document = types.Document(
@@ -38,15 +40,23 @@ def info():
         full_name = e.metadata['wikipedia_url'].split('/')[-1]
         entity = dict(
             name=e.name,
-            image_url=get_primary_image(full_name),
-            summary=wiki.summary(full_name, sentences=2))
+            full_name=full_name)
         print(entity)
         info_data.append(entity)
 
     # no error at the moment
     return jsonify(status='success', data=info_data)
 
-def get_primary_image(title):
+
+@app.route('/api/summary/<entity>')
+def summary(entity):
+    return {
+        'name': entity.name,
+        'image_url': None,
+        'summary': None
+    }
+
+def primary_image(title):
     payload = dict(
         action='query',
         prop='pageimages',
@@ -59,6 +69,7 @@ def get_primary_image(title):
     data = resp.json()
     page_info = next(iter(data['query']['pages'].values()))
     return page_info['thumbnail']['source'] if 'thumbnail' in page_info else None
+
 
 if __name__ == '__main__':
     # This is used when running locally only. When deploying to Google App
