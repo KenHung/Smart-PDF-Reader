@@ -27,7 +27,9 @@ def entities():
         type=enums.Document.Type.PLAIN_TEXT)
 
     resp = client.analyze_entities(document=document, encoding_type='UTF32')
-    wiki_entities = [e for e in resp.entities if 'wikipedia_url' in e.metadata]
+    # bypass non-English entities or entities without wiki entry
+    wiki_entities = [e for e in resp.entities if e.metadata.get(
+        'wikipedia_url', '').startswith('https://en')]
 
     info_data = []
     for e in wiki_entities:

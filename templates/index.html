@@ -17,11 +17,20 @@
 <body>
   <div class="h-100">
     <div id="docent">
-      <div class="card m-2" v-for="item in entities">
-        <img :src="item.image" class="card-img-top" alt="...">
-        <div class="card-body">
-          <h5 class="card-title">{{ item.name }}</h5>
-          <p class="card-text"><small>{{ item.text }}</small></p>
+      <div class="card m-2" v-for="(item, index) in entities">
+        <img :src="item.image" class="card-img-top text-center" alt="">
+        <div :id="'heading' + index" class="card-header">
+          <h5 class="mb-0">
+            <button class="btn btn-link collapsed" data-toggle="collapse" :data-target="'#collapse' + index" aria-expanded="false"
+              :aria-controls="'collapse' + index">
+              {{ item.name }}
+            </button>
+          </h5>
+        </div>
+        <div :id="'collapse' + index" class="collapse" :aria-labelledby="'heading' + index" data-parent="#docent">
+          <div class="card-body">
+            <p class="card-text"><small>{{ item.text }}</small></p>
+          </div>
         </div>
       </div>
     </div>
