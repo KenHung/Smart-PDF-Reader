@@ -45,18 +45,23 @@ def entities():
 @app.route('/api/summary/<entity>')
 def summary(entity):
     """get summary data from Wikipedia, mainly text and primary image url"""
-    resp = requests.get(
-        f'https://en.wikipedia.org/api/rest_v1/page/summary/{entity}')
+    rm = requests.get(
+        f'https://en.wikipedia.org/api/rest_v1/page/metadata/{entity}')
+    metadata = rm.json()
+    zh = next(
+        (link for link in metadata['language_links'] if link['lang'] == 'zh'), None)
+    if zh is not None:
+        summary_url = zh['summary_url']
+    else:
+        summary_url = f'https://en.wikipedia.org/api/rest_v1/page/summary/{entity}'
+
+    resp = requests.get(summary_url)
     print('GET ' + resp.url)
     data = resp.json()
-    if 'extract' in data:
-        sentences = data['extract'].split('.')
-        first_two_sen = '.'.join(sentences[:2]) + '.'
-    else:
-        first_two_sen = None
     summary_data = {
+        'name': entity,
         'image_url': data['thumbnail']['source'] if 'thumbnail' in data else None,
-        'text': first_two_sen
+        'text': data.get('extract')
     }
     return jsonify(status='success', data=summary_data)
 
