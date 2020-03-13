@@ -26,6 +26,7 @@ def test_summary_en(client):
     summary = data['data']
     assert summary['image_url'].startswith('https://')
     assert summary['text'] is not None
+    assert summary['wiki'].startswith('https://en.wiki')
 
 
 def test_summary(client):
@@ -34,3 +35,4 @@ def test_summary(client):
     summary = data['data']
     assert summary['image_url'].startswith('https://')
     assert summary['text'] is not None
+    assert summary['wiki'].startswith('https://zh.wiki')

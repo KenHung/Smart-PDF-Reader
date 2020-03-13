@@ -63,7 +63,8 @@ def summary(entity):
     summary_data = {
         'name': entity,
         'image_url': data['thumbnail']['source'] if 'thumbnail' in data else None,
-        'text': data.get('extract')
+        'text': data.get('extract'),
+        'wiki': data['content_urls']['desktop']['page']
     }
     return jsonify(status='success', data=summary_data)
 

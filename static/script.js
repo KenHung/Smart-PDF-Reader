@@ -53,5 +53,6 @@ function fetchSummary(entity) {
       const summary = jsonData.data;
       vm.$set(entity, 'text', summary.text);
       vm.$set(entity, 'image', summary.image_url);
+      vm.$set(entity, 'wiki', summary.wiki);
     });
 }

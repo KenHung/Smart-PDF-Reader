@@ -21,15 +21,20 @@
         <img :src="item.image" class="card-img-top text-center" alt="">
         <div :id="'heading' + index" class="card-header">
           <h5 class="mb-0">
-            <button class="btn btn-link collapsed" data-toggle="collapse" :data-target="'#collapse' + index" aria-expanded="false"
-              :aria-controls="'collapse' + index">
+            <button class="btn btn-link collapsed" data-toggle="collapse" :data-target="'#collapse' + index"
+              aria-expanded="false" :aria-controls="'collapse' + index">
               {{ item.name }}
             </button>
           </h5>
         </div>
         <div :id="'collapse' + index" class="collapse" :aria-labelledby="'heading' + index" data-parent="#docent">
           <div class="card-body">
-            <p class="card-text"><small>{{ item.text }}</small></p>
+            <p class="card-text">
+              <small>
+                {{ item.text }}
+                <a :href="item.wiki" target="_blank" class="card-link">維基百科</a>
+              </small>
+            </p>
           </div>
         </div>
       </div>
