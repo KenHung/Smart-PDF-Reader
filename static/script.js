@@ -30,19 +30,28 @@ var vm = new Vue({
 })
 
 function fetchEntities(text) {
-  fetch('/api/entities?text=' + text)
+  fetch('/api/analyzeEntities', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ text: text })
+  })
     .then(resp => resp.json())
     .then(jsonData => {
       vm.entities = jsonData.data
       for (let i = 0; i < vm.entities.length; i++) {
-        fetch('/api/summary/' + vm.entities[i].full_name)
-          .then(resp => resp.json())
-          .then(jsonData => {
-            const summary = jsonData.data;
-            const entity = vm.entities.find(e => e.full_name === summary.name);
-            vm.$set(entity, 'text', summary.text);
-            vm.$set(entity, 'image', summary.image_url);
-          });
+        fetchSummary(vm.entities[i]);
       }
+    });
+}
+
+function fetchSummary(entity) {
+  fetch('/api/summary/' + entity.full_name)
+    .then(resp => resp.json())
+    .then(jsonData => {
+      const summary = jsonData.data;
+      vm.$set(entity, 'text', summary.text);
+      vm.$set(entity, 'image', summary.image_url);
     });
 }

@@ -15,12 +15,12 @@ def root():
     return send_from_directory('templates', 'index.html')
 
 
-@app.route('/api/entities')
+@app.route('/api/analyzeEntities', methods=['POST'])
 def entities():
     """get all entities in text using Google NLP API, 
     only entities with wikipedia entries are returned
     """
-    text = request.args.get('text')
+    text = request.get_json().get('text')
 
     document = types.Document(
         content=text,
@@ -55,7 +55,6 @@ def summary(entity):
     else:
         first_two_sen = None
     summary_data = {
-        'name': entity,
         'image_url': data['thumbnail']['source'] if 'thumbnail' in data else None,
         'text': first_two_sen
     }
