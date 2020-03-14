@@ -21,3 +21,5 @@ Google Cloud was used for entity analysis and pictures were from Wikipedia.
 * Viewing two page at once may not supported well
 * Refreshing entities may be performed during scrolling
 * Grouping entities by type may be a good idea
+
+Deployed version: https://smart-pdf-reader.appspot.com/
