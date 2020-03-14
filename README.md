@@ -5,6 +5,8 @@ by adding related pictures next to the wordy PDF document.
 
 ![](./demo.png)
 
+Live version: https://smart-pdf-reader.appspot.com/
+
 ## Mechanism
 
 PDF.js and its viewer was used to render the PDF document, the text on the page will be sent to Python backend for analyzing entities and getting pictures.
@@ -21,5 +23,3 @@ Google Cloud was used for entity analysis and pictures were from Wikipedia.
 * Viewing two page at once may not supported well
 * Refreshing entities may be performed during scrolling
 * Grouping entities by type may be a good idea
-
-Deployed version: https://smart-pdf-reader.appspot.com/
