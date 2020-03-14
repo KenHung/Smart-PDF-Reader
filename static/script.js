@@ -1,33 +1,47 @@
 'use strict';
 
-window.addEventListener('load', function () {
-  console.log("Hello World!");
-
-  let iframe = document.getElementById('pdf-viewer');
-  let pdfViewer = iframe.contentWindow.document.getElementById('viewer');
-  let numPages = iframe.contentWindow.document.getElementById('numPages');
-
-  numPages.addEventListener('DOMSubtreeModified', () => {
-    console.log('change ' + numPages.textContent);
-    const pageMatch = numPages.textContent.match(/(\d+) /);
-    if (pageMatch) {
-      const currentPageNum = pageMatch[1];
-      const currentPage = pdfViewer.querySelector(`.page[data-page-number='${currentPageNum}']`);
-      if (currentPage) {
-        fetchEntities(currentPage.textContent);
-      }
-    }
-  });
-});
-
 var vm = new Vue({
   el: '#docent',
   data: {
-    entities: [
-      { name: 'Loading...' },
-    ]
+    entities: []
   }
-})
+});
+
+var pdfViewer;
+var numPages;
+
+window.addEventListener('load', function () {
+  var iframe = document.getElementById('pdf-viewer');
+  pdfViewer = iframe.contentWindow.document.getElementById('viewer');
+  numPages = iframe.contentWindow.document.getElementById('numPages');
+  numPages.addEventListener('DOMSubtreeModified', updateDocent);
+
+  // workaround for first time loading, may be improved later
+  window.setInterval(() => {
+    if (vm.entities.length === 0) {
+      updateDocent();
+    }
+  }, 1000);
+});
+
+function updateDocent() {
+  const pageMatch = numPages.textContent.match(/(\d+) /);
+  if (pageMatch) {
+    const currentPageNum = pageMatch[1];
+    const prevPage = pdfViewer.querySelector(`.page[data-page-number='${currentPageNum - 1}']`);
+    const currPage = pdfViewer.querySelector(`.page[data-page-number='${currentPageNum}']`);
+    let pageText = '';
+    if (prevPage) {
+      pageText += prevPage.textContent;
+    }
+    if (currPage) {
+      pageText += currPage.textContent;
+    }
+    if (pageText !== '') {
+      fetchEntities(pageText);
+    }
+  }
+}
 
 function fetchEntities(text) {
   fetch('/api/analyzeEntities', {
@@ -39,9 +53,21 @@ function fetchEntities(text) {
   })
     .then(resp => resp.json())
     .then(jsonData => {
-      vm.entities = jsonData.data
-      for (let i = 0; i < vm.entities.length; i++) {
-        fetchSummary(vm.entities[i]);
+      const newEntities = jsonData.data;
+      const brandNew = [];
+      for (let i = 0; i < newEntities.length; i++) {
+        const newEntity = newEntities[i];
+        const oldMatch = vm.entities.find(e => e.full_name == newEntity.full_name);
+        if (oldMatch) {
+          newEntities[i] = oldMatch;
+        }
+        else {
+          brandNew.push(newEntity);
+        }
+      }
+      vm.entities = newEntities;
+      for (const newEntity of brandNew) {
+        fetchSummary(newEntity);
       }
     });
 }
